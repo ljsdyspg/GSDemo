@@ -143,10 +143,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             aMap = mapView.getMap();
             aMap.setOnMapClickListener(this);// add the listener for click for amap object
         }
-
-        LatLng shenzhen = new LatLng(22.5362, 113.9454);
-        aMap.addMarker(new MarkerOptions().position(shenzhen).title("Marker in Shenzhen"));
-        aMap.moveCamera(CameraUpdateFactory.newLatLng(shenzhen));
+        //把标记点定在武汉大学樱花城堡，其实没有什么用，使用的是原始坐标，应该变动到枫14了
+        LatLng shenzhen = new LatLng(30.5395328059, 114.3636785327);
+        aMap.addMarker(new MarkerOptions().position(shenzhen).title("Marker in WHU"));//添加标记
+        aMap.moveCamera(CameraUpdateFactory.newLatLng(shenzhen));//标记视野居中嘛
     }
 
     @Override
