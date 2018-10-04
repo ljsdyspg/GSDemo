@@ -67,14 +67,14 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     private boolean isAdd = false;
 
-    private double droneLocationLat = 181, droneLocationLng = 181;
+    private double droneLocationLat = 181, droneLocationLng = 181;//181超出180的范围，所以设置该初值
     private final Map<Integer, Marker> mMarkers = new ConcurrentHashMap<Integer, Marker>();
-    private Marker droneMarker = null;
+    private Marker droneMarker = null;//表示飞机位置的标记对象
 
     private float altitude = 100.0f;
     private float mSpeed = 10.0f;
 
-    private List<Waypoint> waypointList = new ArrayList<>();
+    private List<Waypoint> waypointList = new ArrayList<>();//存储路径，Wayponit三个参数，经纬高
 
     public static WaypointMission.Builder waypointMissionBuilder;
     private FlightController mFlightController;
@@ -143,7 +143,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             aMap = mapView.getMap();
             aMap.setOnMapClickListener(this);// add the listener for click for amap object
         }
-        //把标记点定在武汉大学樱花城堡，其实没有什么用，使用的是原始坐标，应该变动到枫14了
+        //把标记点定在武汉大学樱花城堡，其实没有什么用，使用的是原始坐标，在火星坐标上应该变动到枫14了
         LatLng shenzhen = new LatLng(30.5395328059, 114.3636785327);
         aMap.addMarker(new MarkerOptions().position(shenzhen).title("Marker in WHU"));//添加标记
         aMap.moveCamera(CameraUpdateFactory.newLatLng(shenzhen));//标记视野居中嘛
@@ -156,8 +156,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         setContentView(R.layout.activity_main);
 
         IntentFilter filter = new IntentFilter();
-        filter.addAction(DJIDemoApplication.FLAG_CONNECTION_CHANGE);
-        registerReceiver(mReceiver, filter);
+        filter.addAction(DJIDemoApplication.FLAG_CONNECTION_CHANGE);//过滤器监视飞机连接状态的改变
+        registerReceiver(mReceiver, filter);//注册广播接收器
 
         mapView = (MapView) findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
@@ -167,9 +167,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         addListener();
 
     }
-
+    //为了感知飞机的连接状态，这里注册一个广播接收器，当飞机的连接状态改变时，onReceive()即被调用
     protected BroadcastReceiver mReceiver = new BroadcastReceiver() {
-
         @Override
         public void onReceive(Context context, Intent intent) {
             onProductConnectionChange();
@@ -182,8 +181,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         loginAccount();
     }
 
+    //这里再次登录账号
     private void loginAccount(){
-
         UserAccountManager.getInstance().logIntoDJIUserAccount(this,
                 new CommonCallbacks.CompletionCallbackWith<UserAccountState>() {
                     @Override
@@ -200,15 +199,15 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     private void initFlightController() {
 
-        BaseProduct product = DJIDemoApplication.getProductInstance();
+        BaseProduct product = DJIDemoApplication.getProductInstance();//获取product实例
         if (product != null && product.isConnected()) {
-            if (product instanceof Aircraft) {
-                mFlightController = ((Aircraft) product).getFlightController();
+            if (product instanceof Aircraft) {//Aircraft继承自BaseProduct
+                mFlightController = ((Aircraft) product).getFlightController();//当product是Aircraft的实例时，获取FlightController的实例
             }
         }
 
         if (mFlightController != null) {
-
+            //这里通过FlightController获取飞机的经纬度数据
             mFlightController.setStateCallback(
                     new FlightControllerState.Callback() {
                         @Override
@@ -225,7 +224,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     //Add Listener for WaypointMissionOperator
     private void addListener() {
-        if (getWaypointMissionOperator() != null) {
+        if (getWaypointMissionOperator() != null) {//getWaypointMissionOperator()返回WaypointMissionOperator实例，可执行
             getWaypointMissionOperator().addListener(eventNotificationListener);
         }
     }
@@ -289,20 +288,21 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             setResultToToast("Cannot Add Waypoint");
         }
     }
-
+    //检查经纬度数值的合法性，返回布尔值
     public static boolean checkGpsCoordination(double latitude, double longitude) {
         return (latitude > -90 && latitude < 90 && longitude > -180 && longitude < 180) && (latitude != 0f && longitude != 0f);
     }
 
     // Update the drone location based on states from MCU.
+    //更新飞机的位置信息
     private void updateDroneLocation(){
 
         LatLng pos = new LatLng(droneLocationLat, droneLocationLng);
-        //Create MarkerOptions object
+        //创建一个地图上的标记用来表示当前飞机的位置，MarkerOptions为可定义的Marker选项
         final MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(pos);
-        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.aircraft));
-
+        markerOptions.position(pos);//设置位置
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.aircraft));//设置图标，通过BitmapDescriptorFactory获取一个BitmapDescriptor对象
+        //当updateDroneLocation()被调用时，飞机的位置发生改变，所以还需要更新UI显示飞机的位置
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -311,14 +311,13 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 }
 
                 if (checkGpsCoordination(droneLocationLat, droneLocationLng)) {
-                    droneMarker = aMap.addMarker(markerOptions);
+                    droneMarker = aMap.addMarker(markerOptions);//经纬度合法，添加进地图中
                 }
             }
         });
     }
 
     private void markWaypoint(LatLng point){
-        //Create MarkerOptions object
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(point);
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
@@ -345,14 +344,14 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                         aMap.clear();
                     }
 
-                });
-                waypointList.clear();
-                waypointMissionBuilder.waypointList(waypointList);
-                updateDroneLocation();
+                });//把地图上的覆盖物都清除掉
+                waypointList.clear();//
+                waypointMissionBuilder.waypointList(waypointList);//清除已设置的路径
+                updateDroneLocation();//然后再把飞机的位置显示出来
                 break;
             }
             case R.id.config:{
-                showSettingDialog();
+                showSettingDialog();//显示对话框，添加设置
                 break;
             }
             case R.id.upload:{
@@ -372,6 +371,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         }
     }
 
+    //按下location,视角切换到以飞机的位置为居中位置
     private void cameraUpdate(){
         LatLng pos = new LatLng(droneLocationLat, droneLocationLng);
         float zoomlevel = (float) 18.0;
@@ -390,6 +390,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         }
     }
 
+    //该方法显示设置对话框 高度、速度、任务完成后的行为、朝向？
     private void showSettingDialog(){
         LinearLayout wayPointSettings = (LinearLayout)getLayoutInflater().inflate(R.layout.dialog_waypointsetting, null);
 
@@ -525,7 +526,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         }
 
     }
-
+    //上传路径飞行任务到飞机
     private void uploadWayPointMission(){
 
         getWaypointMissionOperator().uploadMission(new CommonCallbacks.CompletionCallback() {
@@ -541,7 +542,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         });
 
     }
-
+    //开始执行路径飞行任务
     private void startWaypointMission(){
 
         getWaypointMissionOperator().startMission(new CommonCallbacks.CompletionCallback() {
@@ -552,7 +553,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         });
 
     }
-
+    //停止执行路径飞行任务
     private void stopWaypointMission(){
 
         getWaypointMissionOperator().stopMission(new CommonCallbacks.CompletionCallback() {
