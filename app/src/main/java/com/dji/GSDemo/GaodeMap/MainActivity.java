@@ -268,11 +268,11 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         }
         return instance;
     }
-
+    //这里点击地图，会添加路径点
     @Override
     public void onMapClick(LatLng point) {
         if (isAdd == true){
-            markWaypoint(point);
+            markWaypoint(point);//按一下，显示一个新的点
             Waypoint mWaypoint = new Waypoint(point.latitude, point.longitude, altitude);
             //Add Waypoints to Waypoint arraylist;
             if (waypointMissionBuilder != null) {
@@ -345,8 +345,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                     }
 
                 });//把地图上的覆盖物都清除掉
-                waypointList.clear();//
-                waypointMissionBuilder.waypointList(waypointList);//清除已设置的路径
+                waypointList.clear();//清除已设置的路径
+                waypointMissionBuilder.waypointList(waypointList);
                 updateDroneLocation();//然后再把飞机的位置显示出来
                 break;
             }
@@ -398,7 +398,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         RadioGroup speed_RG = (RadioGroup) wayPointSettings.findViewById(R.id.speed);
         RadioGroup actionAfterFinished_RG = (RadioGroup) wayPointSettings.findViewById(R.id.actionAfterFinished);
         RadioGroup heading_RG = (RadioGroup) wayPointSettings.findViewById(R.id.heading);
-
+        //设置三档速度
         speed_RG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
 
             @Override
@@ -488,7 +488,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         } catch (Exception e) {return false;}
         return true;
     }
-
+    //将对话框中所设定的飞行参数导入waypointMissionBuilder中
     private void configWayPointMission(){
 
         if (waypointMissionBuilder == null){
@@ -510,14 +510,13 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         }
 
         if (waypointMissionBuilder.getWaypointList().size() > 0){
-
+            //每段航程的高度都设置成一样的
             for (int i=0; i< waypointMissionBuilder.getWaypointList().size(); i++){
                 waypointMissionBuilder.getWaypointList().get(i).altitude = altitude;
             }
 
             setResultToToast("Set Waypoint attitude successfully");
         }
-
         DJIError error = getWaypointMissionOperator().loadMission(waypointMissionBuilder.build());
         if (error == null) {
             setResultToToast("loadWaypoint succeeded");
