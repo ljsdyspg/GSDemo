@@ -24,6 +24,7 @@ import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.AMap.OnMapClickListener;
 import com.amap.api.maps2d.CameraUpdate;
 import com.amap.api.maps2d.CameraUpdateFactory;
+import com.amap.api.maps2d.CoordinateConverter;
 import com.amap.api.maps2d.MapView;
 import com.amap.api.maps2d.model.BitmapDescriptorFactory;
 import com.amap.api.maps2d.model.LatLng;
@@ -63,7 +64,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private AMap aMap;
 
     private Button locate, add, clear;
-    private Button config, upload, start, stop;
+    private Button config, upload, start, stop, test, pause, resume;
 
     private boolean isAdd = false;
 
@@ -126,6 +127,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         upload = (Button) findViewById(R.id.upload);
         start = (Button) findViewById(R.id.start);
         stop = (Button) findViewById(R.id.stop);
+        test = (Button) findViewById(R.id.test);
+        pause = (Button) findViewById(R.id.pause);
+        resume = (Button) findViewById(R.id.resume);
 
         locate.setOnClickListener(this);
         add.setOnClickListener(this);
@@ -134,7 +138,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         upload.setOnClickListener(this);
         start.setOnClickListener(this);
         stop.setOnClickListener(this);
-
+        test.setOnClickListener(this);
+        pause.setOnClickListener(this);
+        resume.setOnClickListener(this);
     }
 
     private void initMapView() {
@@ -143,8 +149,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             aMap = mapView.getMap();
             aMap.setOnMapClickListener(this);// add the listener for click for amap object
         }
-        //把标记点定在武汉大学樱花城堡，其实没有什么用，使用的是原始坐标，在火星坐标上应该变动到枫14了
-        LatLng shenzhen = new LatLng(30.5395328059, 114.3636785327);
+
+        LatLng shenzhen = new LatLng(30.5304782900, 114.3555023600);
         aMap.addMarker(new MarkerOptions().position(shenzhen).title("Marker in WHU"));//添加标记
         aMap.moveCamera(CameraUpdateFactory.newLatLng(shenzhen));//标记视野居中嘛
     }
@@ -273,7 +279,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     public void onMapClick(LatLng point) {
         if (isAdd == true){
             markWaypoint(point);//按一下，显示一个新的点
-            Waypoint mWaypoint = new Waypoint(point.latitude, point.longitude, altitude);
+            double []coord = GCJ2WG(point.latitude,point.longitude);
+            Waypoint mWaypoint = new Waypoint(coord[0], coord[1], altitude);
             //Add Waypoints to Waypoint arraylist;
             if (waypointMissionBuilder != null) {
                 waypointList.add(mWaypoint);
@@ -298,6 +305,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private void updateDroneLocation(){
 
         LatLng pos = new LatLng(droneLocationLat, droneLocationLng);
+        //显示飞机时，GPS坐标转换为火星坐标
+        pos = WG2GCJ(pos);
         //创建一个地图上的标记用来表示当前飞机的位置，MarkerOptions为可定义的Marker选项
         final MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(pos);//设置位置
@@ -315,6 +324,18 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 }
             }
         });
+    }
+
+    private LatLng WG2GCJ(LatLng latLng){
+        CoordinateConverter converter = new CoordinateConverter();
+        converter.from(CoordinateConverter.CoordType.GPS);
+        converter.coord(latLng);
+        return converter.convert();
+    }
+
+    private double []GCJ2WG(double lat, double lng){
+        double []coor = BDToGPS.gcj2WGSExactly(lat,lng);
+        return coor;
     }
 
     private void markWaypoint(LatLng point){
@@ -366,6 +387,19 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 stopWaypointMission();
                 break;
             }
+            case R.id.test:{
+
+
+                break;
+            }
+            case R.id.pause:{
+                pauseWaypointMission();
+                break;
+            }
+            case R.id.resume:{
+                resumeWaypointMission();
+                break;
+            }
             default:
                 break;
         }
@@ -374,6 +408,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     //按下location,视角切换到以飞机的位置为居中位置
     private void cameraUpdate(){
         LatLng pos = new LatLng(droneLocationLat, droneLocationLng);
+        pos = WG2GCJ(pos);
         float zoomlevel = (float) 18.0;
         CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(pos, zoomlevel);
         aMap.moveCamera(cu);
@@ -559,6 +594,26 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             @Override
             public void onResult(DJIError error) {
                 setResultToToast("Mission Stop: " + (error == null ? "Successfully" : error.getDescription()));
+            }
+        });
+
+    }
+    private void pauseWaypointMission(){
+
+        getWaypointMissionOperator().pauseMission(new CommonCallbacks.CompletionCallback() {
+            @Override
+            public void onResult(DJIError error) {
+                setResultToToast("Mission Pause: " + (error == null ? "Successfully" : error.getDescription()));
+            }
+        });
+
+    }
+    private void resumeWaypointMission(){
+
+        getWaypointMissionOperator().resumeMission(new CommonCallbacks.CompletionCallback() {
+            @Override
+            public void onResult(DJIError error) {
+                setResultToToast("Mission Resume: " + (error == null ? "Successfully" : error.getDescription()));
             }
         });
 
