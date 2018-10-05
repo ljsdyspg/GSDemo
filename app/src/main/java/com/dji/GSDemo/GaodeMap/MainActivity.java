@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -30,6 +31,8 @@ import com.amap.api.maps2d.model.BitmapDescriptorFactory;
 import com.amap.api.maps2d.model.LatLng;
 import com.amap.api.maps2d.model.Marker;
 import com.amap.api.maps2d.model.MarkerOptions;
+import com.amap.api.maps2d.model.Polyline;
+import com.amap.api.maps2d.model.PolylineOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +71,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     private boolean isAdd = false;
 
+    private int pointNum = 0;
+
     private double droneLocationLat = 181, droneLocationLng = 181;//181超出180的范围，所以设置该初值
     private final Map<Integer, Marker> mMarkers = new ConcurrentHashMap<Integer, Marker>();
     private Marker droneMarker = null;//表示飞机位置的标记对象
@@ -76,6 +81,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private float mSpeed = 10.0f;
 
     private List<Waypoint> waypointList = new ArrayList<>();//存储路径，Wayponit三个参数，经纬高
+    private List<LatLng> mapPointList = new ArrayList<>();//存储地图上的点，用来画线
 
     public static WaypointMission.Builder waypointMissionBuilder;
     private FlightController mFlightController;
@@ -278,7 +284,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     @Override
     public void onMapClick(LatLng point) {
         if (isAdd == true){
+            pointNum++;
             markWaypoint(point);//按一下，显示一个新的点
+            drawLine(point);
             double []coord = GCJ2WG(point.latitude,point.longitude);
             Waypoint mWaypoint = new Waypoint(coord[0], coord[1], altitude);
             //Add Waypoints to Waypoint arraylist;
@@ -298,6 +306,14 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     //检查经纬度数值的合法性，返回布尔值
     public static boolean checkGpsCoordination(double latitude, double longitude) {
         return (latitude > -90 && latitude < 90 && longitude > -180 && longitude < 180) && (latitude != 0f && longitude != 0f);
+    }
+
+    private void drawLine(LatLng point){
+        mapPointList.add(point);
+        if (mapPointList.size()>1){
+            aMap.addPolyline(new PolylineOptions().
+                    addAll(mapPointList).width(10).color(Color.YELLOW));
+        }
     }
 
     // Update the drone location based on states from MCU.
@@ -341,7 +357,20 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private void markWaypoint(LatLng point){
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(point);
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+        int pic_i = R.drawable.pic_1;
+        switch (pointNum){
+            case 1 :pic_i=R.drawable.pic_1;break;
+            case 2 :pic_i=R.drawable.pic_2;break;
+            case 3 :pic_i=R.drawable.pic_3;break;
+            case 4 :pic_i=R.drawable.pic_4;break;
+            case 5 :pic_i=R.drawable.pic_5;break;
+            case 6 :pic_i=R.drawable.pic_6;break;
+            case 7 :pic_i=R.drawable.pic_7;break;
+            case 8 :pic_i=R.drawable.pic_8;break;
+            case 9 :pic_i=R.drawable.pic_9;break;
+            default:pic_i=R.drawable.pic_1;break;
+        }
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(pic_i));
         Marker marker = aMap.addMarker(markerOptions);
         mMarkers.put(mMarkers.size(), marker);
     }
@@ -356,6 +385,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             }
             case R.id.add:{
                 enableDisableAdd();
+                pointNum=0;
                 break;
             }
             case R.id.clear: {
@@ -367,6 +397,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
                 });//把地图上的覆盖物都清除掉
                 waypointList.clear();//清除已设置的路径
+                mapPointList.clear();//清楚已画出的路线
+                pointNum=0;
                 waypointMissionBuilder.waypointList(waypointList);
                 updateDroneLocation();//然后再把飞机的位置显示出来
                 break;
