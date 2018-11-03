@@ -12,9 +12,12 @@ import android.widget.Toast;
 
 import dji.sdk.base.BaseComponent;
 import dji.sdk.base.BaseProduct;
+import dji.sdk.products.Aircraft;
+import dji.sdk.products.HandHeld;
 import dji.sdk.sdkmanager.DJISDKManager;
 import dji.common.error.DJIError;
 import dji.common.error.DJISDKError;
+import dji.sdk.camera.Camera;
 
 public class DJIDemoApplication extends Application {
 
@@ -46,6 +49,15 @@ public class DJIDemoApplication extends Application {
             mProduct = DJISDKManager.getInstance().getProduct();
         }
         return mProduct;
+    }
+    public static synchronized Camera getCameraInstance(){
+        if (getProductInstance()==null) return null;
+
+        Camera camera = null;
+
+        if (getProductInstance() instanceof Aircraft)
+            camera = ((Aircraft) getProductInstance()).getCamera();
+        return camera;
     }
 
     @Override

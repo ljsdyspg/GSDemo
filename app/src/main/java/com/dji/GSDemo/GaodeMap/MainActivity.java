@@ -67,7 +67,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private AMap aMap;
 
     private Button locate, add, clear;
-    private Button config, upload, start, stop, test, pause, resume;
+    private Button config, upload, start, stop, test, pause, resume,fpv;
 
     private boolean isAdd = false;
 
@@ -136,6 +136,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         test = (Button) findViewById(R.id.test);
         pause = (Button) findViewById(R.id.pause);
         resume = (Button) findViewById(R.id.resume);
+        fpv = (Button) findViewById(R.id.fpv);
 
         locate.setOnClickListener(this);
         add.setOnClickListener(this);
@@ -147,6 +148,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         test.setOnClickListener(this);
         pause.setOnClickListener(this);
         resume.setOnClickListener(this);
+        fpv.setOnClickListener(this);
     }
 
     private void initMapView() {
@@ -420,9 +422,11 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 break;
             }
             case R.id.test:{
-
-
+                presetMission();
                 break;
+            }
+            case R.id.fpv:{
+                startActivity(new Intent(this,FPVActivity.class));
             }
             case R.id.pause:{
                 pauseWaypointMission();
@@ -471,11 +475,11 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (checkedId == R.id.lowSpeed){
-                    mSpeed = 3.0f;
+                    mSpeed = 0.2f;
                 } else if (checkedId == R.id.MidSpeed){
-                    mSpeed = 5.0f;
+                    mSpeed = 1.0f;
                 } else if (checkedId == R.id.HighSpeed){
-                    mSpeed = 10.0f;
+                    mSpeed = 5.0f;
                 }
             }
 
@@ -557,7 +561,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
     //将对话框中所设定的飞行参数导入waypointMissionBuilder中
     private void configWayPointMission(){
-
+        //mFinishedAction mHeadingMode mSpeed mSpeed
         if (waypointMissionBuilder == null){
 
             waypointMissionBuilder = new WaypointMission.Builder().finishedAction(mFinishedAction)
@@ -649,6 +653,26 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             }
         });
 
+    }
+    //预设模式，信操标记点，采用精准定位，0.2m/s速度，2m高
+    private void presetMission(){
+        mFinishedAction = WaypointMissionFinishedAction.NO_ACTION;
+        mHeadingMode = WaypointMissionHeadingMode.AUTO;
+        mSpeed = 0.2f;
+        altitude = 2;
+
+        Waypoint mWaypoint1 = new Waypoint(30.5305012900,114.3554853600,altitude);
+        Waypoint mWaypoint2 = new Waypoint(30.5300692900,114.3557913600,altitude);
+
+        waypointMissionBuilder = new WaypointMission.Builder();
+        waypointList.clear();
+        waypointList.add(mWaypoint1);
+        waypointList.add(mWaypoint2);
+        waypointMissionBuilder.waypointList(waypointList).waypointCount(waypointList.size());
+
+
+        configWayPointMission();
+        uploadWayPointMission();
     }
 
 }

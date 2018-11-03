@@ -11,7 +11,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Waypoint Configuration"
+        android:text="路径任务配置"
         android:layout_gravity="center_horizontal">
     </TextView>
 
@@ -26,13 +26,17 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Altitude:">
+            android:text="高度:">
         </TextView>
         <EditText
             android:id="@+id/altitude"
             android:layout_width="40dp"
             android:layout_height="wrap_content">
         </EditText>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="米"/>
     </LinearLayout>
 
     <LinearLayout
@@ -46,7 +50,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Speed:">
+            android:text="速度:">
         </TextView>
         <RadioGroup
             android:layout_width="wrap_content"
@@ -58,17 +62,17 @@
                 android:id="@+id/lowSpeed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Low"/>
+                android:text="0.2m/s"/>
             <RadioButton
                 android:id="@+id/MidSpeed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Mid"/>
+                android:text="1m/s"/>
             <RadioButton
                 android:id="@+id/HighSpeed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="High"/>
+                android:text="5m/s"/>
         </RadioGroup>
     </LinearLayout>
 
@@ -83,7 +87,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Action After Finished:"/>
+            android:text="任务结束后行为:"/>
     </LinearLayout>
 
     <LinearLayout
@@ -101,25 +105,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="5pt"
-                android:text="None"/>
+                android:text="无行为"/>
             <RadioButton
                 android:id="@+id/finishGoHome"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="5pt"
-                android:text="GoHome"/>
+                android:text="返回原点(不建议)"/>
             <RadioButton
                 android:id="@+id/finishAutoLanding"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="5pt"
-                android:text="AutoLand"/>
+                android:text="直接降落"/>
             <RadioButton
                 android:id="@+id/finishToFirst"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="5pt"
-                android:text="BackTo 1st"/>
+                android:text="返回第一点"/>
         </RadioGroup>
     </LinearLayout>
 
@@ -134,7 +138,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Heading:"/>
+            android:text="云台朝向:"/>
     </LinearLayout>
 
     <LinearLayout
@@ -152,25 +156,78 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="5pt"
-                android:text="Auto"/>
+                android:text="飞行朝向"/>
             <RadioButton
                 android:id="@+id/headingInitDirec"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="5pt"
-                android:text="Initial"/>
+                android:text="初始方向"/>
             <RadioButton
                 android:id="@+id/headingRC"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="5pt"
-                android:text="RC Control"/>
+                android:text="遥控器调整"/>
             <RadioButton
                 android:id="@+id/headingWP"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="5pt"
-                android:text="Use Waypoint"/>
+                android:text="朝向下一点"/>
+        </RadioGroup>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="相机朝向:"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="相机朝下"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="相机模式:"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/cameraMode"
+            android:layout_gravity="center_horizontal">
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="到点拍照"/>
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="全程录像"/>
         </RadioGroup>
     </LinearLayout>
 </LinearLayout>

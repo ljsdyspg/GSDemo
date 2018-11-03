@@ -14,19 +14,19 @@
             android:id="@+id/locate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Locate"
+            android:text="定位"
             android:layout_weight="1"/>
         <Button
             android:id="@+id/add"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Add"
+            android:text="添加路径点"
             android:layout_weight="1"/>
         <Button
             android:id="@+id/clear"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Clear"
+            android:text="清除路径点"
             android:layout_weight="1"/>
     </LinearLayout>
 
@@ -38,19 +38,25 @@
             android:id="@+id/config"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Config"
+            android:text="任务配置"
             android:layout_weight="1"/>
         <Button
             android:id="@+id/upload"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Upload"
+            android:text="上传任务"
             android:layout_weight="1"/>
         <Button
             android:id="@+id/test"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="test"
+            android:text="测试"
+            android:layout_weight="1"/>
+        <Button
+            android:id="@+id/fpv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="FPV"
             android:layout_weight="1"/>
     </LinearLayout>
     <LinearLayout
@@ -61,25 +67,25 @@
             android:id="@+id/start"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Start"
+            android:text="开始"
             android:layout_weight="1"/>
     <Button
             android:id="@+id/stop"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Stop"
+            android:text="停止"
             android:layout_weight="1"/>
         <Button
             android:id="@+id/pause"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="pause"
+            android:text="暂停"
             android:layout_weight="1"/>
         <Button
             android:id="@+id/resume"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="resume"
+            android:text="继续"
             android:layout_weight="1"/>
     </LinearLayout>
     <LinearLayout
@@ -88,7 +94,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="1.地图上添加路径点 2.config中配置参数 3.upload路径任务到飞机 4.start开始任务"
+            android:text="1.地图上添加路径点 2.配置中调整参数 3.上传任务到飞机 4.开始任务"
             android:textSize="10dp"
             />
     </LinearLayout>
