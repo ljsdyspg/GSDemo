@@ -79,6 +79,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     private float altitude = 100.0f;
     private float mSpeed = 10.0f;
+    private float maxSpeed = 10.0f;
 
     private List<Waypoint> waypointList = new ArrayList<>();//存储路径，Wayponit三个参数，经纬高
     private List<LatLng> mapPointList = new ArrayList<>();//存储地图上的点，用来画线
@@ -98,6 +99,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     @Override
     protected void onPause(){
         super.onPause();
+        resumeWaypointMission();
     }
 
     @Override
@@ -567,7 +569,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             waypointMissionBuilder = new WaypointMission.Builder().finishedAction(mFinishedAction)
                                                                   .headingMode(mHeadingMode)
                                                                   .autoFlightSpeed(mSpeed)
-                                                                  .maxFlightSpeed(mSpeed)
+                                                                  .maxFlightSpeed(maxSpeed)
                                                                   .flightPathMode(WaypointMissionFlightPathMode.NORMAL);
 
         }else
@@ -575,7 +577,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             waypointMissionBuilder.finishedAction(mFinishedAction)
                     .headingMode(mHeadingMode)
                     .autoFlightSpeed(mSpeed)
-                    .maxFlightSpeed(mSpeed)
+                    .maxFlightSpeed(maxSpeed)
                     .flightPathMode(WaypointMissionFlightPathMode.NORMAL);
 
         }
