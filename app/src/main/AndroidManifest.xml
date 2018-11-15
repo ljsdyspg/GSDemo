@@ -89,9 +89,12 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".FPVActivity"
-            android:screenOrientation="landscape"></activity>
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".FPVActivity"
+            android:screenOrientation="landscape" />
+        <activity android:name=".MyWaypointMission"
+            android:screenOrientation="landscape"/>
     </application>
 
 </manifest>

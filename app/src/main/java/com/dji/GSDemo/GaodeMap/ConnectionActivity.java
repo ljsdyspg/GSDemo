@@ -39,6 +39,7 @@ public class ConnectionActivity extends Activity implements View.OnClickListener
     private TextView mTextProduct;
     private TextView mVersionTv;
     private Button mBtnOpen;
+    private Button mBtnWaypoint;
     private static final String[] REQUIRED_PERMISSION_LIST = new String[]{
             Manifest.permission.VIBRATE,
             Manifest.permission.INTERNET,
@@ -214,6 +215,9 @@ public class ConnectionActivity extends Activity implements View.OnClickListener
         mBtnOpen = (Button) findViewById(R.id.btn_open);
         mBtnOpen.setOnClickListener(this);
         mBtnOpen.setEnabled(false);
+        mBtnWaypoint = (Button) findViewById(R.id.btn_waypoint);
+        mBtnWaypoint.setOnClickListener(this);
+        mBtnWaypoint.setEnabled(false);
 
         mVersionTv = (TextView) findViewById(R.id.textView2);
         mVersionTv.setText(getResources().getString(R.string.sdk_version, DJISDKManager.getInstance().getSDKVersion()));
@@ -233,6 +237,7 @@ public class ConnectionActivity extends Activity implements View.OnClickListener
         if (null != mProduct && mProduct.isConnected()) {
             Log.v(TAG, "refreshSDK: True");
             mBtnOpen.setEnabled(true);
+            mBtnWaypoint.setEnabled(true);
 
             String str = mProduct instanceof Aircraft ? "DJIAircraft" : "DJIHandHeld";
             mTextConnectionStatus.setText("Status: " + str + " connected");
@@ -246,6 +251,7 @@ public class ConnectionActivity extends Activity implements View.OnClickListener
         } else {
             Log.v(TAG, "refreshSDK: False");
             mBtnOpen.setEnabled(false);
+            mBtnWaypoint.setEnabled(false);
 
             mTextProduct.setText(R.string.product_information);
             mTextConnectionStatus.setText(R.string.connection_loose);
@@ -255,11 +261,13 @@ public class ConnectionActivity extends Activity implements View.OnClickListener
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-
             case R.id.btn_open: {
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
                 break;
+            }
+            case R.id.btn_waypoint:{
+                startActivity(new Intent(this,MyWaypointMission.class));
             }
             default:
                 break;
